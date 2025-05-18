@@ -15,14 +15,19 @@ datasource db {
 }
 
 model User {
-  id            String         @id @default(cuid())
-  user_id       String         @unique()
-  username      String
-  avatar        String?
-  created_at    DateTime       @default(now())
-  updated_at    DateTime       @updatedAt
-  conversations Conversation[]
-  participants  Participant[]
+  id               String         @id @default(cuid())
+  user_id          String         @unique()
+  username         String
+  avatar           String?
+  created_at       DateTime       @default(now())
+  updated_at       DateTime       @updatedAt
+  conversations    Conversation[]
+  participants     Participant[]
+  // Friendships where this user is user1
+  friendsInitiated Friend[]       @relation("User1Friends")
+
+  // Friendships where this user is user2
+  friendsReceived Friend[] @relation("User2Friends")
 }
 
 model Conversation {
@@ -50,4 +55,18 @@ model Participant {
 
   @@unique([user_id, conversation_id])
   @@map("participants")
+}
+
+model Friend {
+  id        String   @id @default(cuid())
+  user1_id  String
+  user2_id  String
+  user1     User     @relation("User1Friends", fields: [user1_id], references: [user_id])
+  user2     User     @relation("User2Friends", fields: [user2_id], references: [user_id])
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([user1_id, user2_id])
+  @@unique([user2_id, user1_id])
+  @@map("user_friends")
 }

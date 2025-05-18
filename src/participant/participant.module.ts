@@ -1,15 +1,9 @@
 import { Global, Module } from '@nestjs/common';
 import { ParticipantService } from './participant.service';
-import { Participant, ParticipantSchema } from './participant.schema';
-import { MongooseModule } from '@nestjs/mongoose';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Module({
-  imports: [
-    MongooseModule.forFeature([
-      { name: Participant.name, schema: ParticipantSchema },
-    ]),
-  ],
-  providers: [ParticipantService],
+  providers: [ParticipantService, PrismaService],
   exports: [ParticipantService],
 })
 @Global()

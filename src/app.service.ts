@@ -11,6 +11,7 @@ import { Message } from './message/message.schema';
 import { Conversation, Participant } from '@prisma/client';
 import { UserService } from './user/user.service';
 import { CreateGroupInput } from './conversation/conversation.input';
+import { FriendService } from './friend/friend.service';
 
 @Injectable()
 export class AppService {
@@ -19,13 +20,16 @@ export class AppService {
     private readonly message: MessageService,
     private readonly conversation: ConversationService,
     private readonly user: UserService,
+    private readonly friend: FriendService,
   ) {}
 
   async startNewConversation(uid: string, rid: string): Promise<Conversation> {
     const user = await this.user.user({ where: { user_id: rid } });
-
     if (!user) throw new ForbiddenException('Recipient does not exist');
 
+    const friend = await this.friend.friend(uid, rid);
+    if (!friend)
+      throw new UnauthorizedException('User not friends with recipient');
     const conversation = await this.conversation.create({
       participant: {
         createMany: { data: [{ user_id: uid }, { user_id: rid }] },
