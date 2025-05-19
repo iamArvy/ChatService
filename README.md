@@ -6,49 +6,59 @@ The **Chat Service** is a real-time messaging microservice built with **NestJS**
 
 ## 🚀 Features
 
-* 🔁 Real-time messaging using Socket.io
-* 📦 Create 1-on-1 or group conversations
-* 📨 Send, edit, and delete messages
-* 📜 Retrieve list of conversations and message history
-* ⚙️ REST API and GraphQL support
-* 📘 API documentation via Swagger and Apollo Playground
-* 🧩 Modular and scalable microservice architecture
+* Real-time messaging using Socket.io
+* Create 1-on-1 or group conversations
+* Send, edit, and delete messages
+* Retrieve list of conversations and message history
+* REST API and GraphQL support
+* API documentation via Swagger and Apollo Playground
+* Modular and scalable microservice architecture
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Framework**: NestJS
-* **Realtime**: Socket.io
+* **Framework**: [NestJS](https://nestjs.com/)
+* **Authentication**: [Passport.js](https://www.passportjs.org/) & [JWT (JSON Web Tokens)](https://jwt.io/)
+* **Realtime**: [Socket.io](https://www.socket.io/)
 * **API**: REST, GraphQL (Apollo)
-* **ORM**: Prisma & Mongoose
-* **Databases**: PostgreSQL (for relational data), MongoDB (for document-based data)
-* **API Docs**: Swagger (REST), Apollo Playground (GraphQL)
+* **ORM**: [Prisma](https://www.prisma.io/) & [Mongoose](https://www.mongoose.org/)
+* **Databases**: [PostgreSQL](https://www.postgresql.org/) for relational data, [MongoDB](https://www.mongodb.org/) (for document-based data)
+* **API Docs**: [Swagger](https://swagger.org) for REST, [Apollo Playground](https://apollo.org) for GraphQL
 
 ---
 
-## 📦 Installation
+## Getting Started
+
+### Prerequisites
+
+- Node.js (v20+)
+- npm, yarn, or pnpm (pnpm is recommended)
+
+### Installation
 
 ```bash
-# Clone the repository
-git clone <repo-url>
+git clone https://github.com/iamArvy/chat-service.git
 cd chat-service
-
-# Install dependencies using pnpm (preferred)
 pnpm install
-
-# Or using npm
-yarn install
-npm install
 ```
 
----
+### Environment Variables
 
-## 🧪 Running the Service
+Create a `.env` file in the root directory with the following variables:
+
+```
+MONGO_DB_URL="your_mongodb_connection_string"
+POSTGRES_DB_URL="your_mongodb_connection_string"
+JWT_SECRET="your_jwt_secret"
+PORT=3000
+```
+
+### Running the service
 
 ```bash
 # Start the dev server
-pnpm start:dev
+pnpm run start:dev
 
 # Or with Docker
 docker-compose up --build
@@ -68,16 +78,22 @@ docker-compose up --build
 ```
 chat-service/
 ├── src/
+│   ├── conversation/    # Conversation logic, controller, resolver etc
+│   ├── friend/          # Friend Relationship Logic (Data to be Acquired through events from User Service)
 │   ├── gateway/         # WebSocket Gateway
-│   ├── message/         # Message logic
-│   ├── conversation/    # Conversations
-│   ├── graphql/         # GraphQL resolvers & schema
-│   ├── rest/            # REST controllers
+│   ├── guards/          # Application Route Guards
+│   ├── message/         # Message logic, controller, resolver etc
+│   ├── participant/     # Participants logic, controller, resolver etc
 │   ├── prisma/          # Prisma setup (Postgres)
-│   ├── mongoose/        # Mongoose models (MongoDB)
-│   └── app.module.ts
+│   ├── strategies/      # User Relationship Logic (Data to be acquired through events from User Service)
+│   ├── app.module.ts
+│   └── main.ts
 ├── docker-compose.yml
-└── README.md
+├── Dockerfile
+├── nest-cli.json
+├── package.json
+├── README.md
+└── tsconfig.json
 ```
 
 ---

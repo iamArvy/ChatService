@@ -8,32 +8,29 @@ import {
   MessageBody,
 } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { Logger } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Logger, UseGuards } from '@nestjs/common';
+import { MessageService } from 'src/message/service';
+import { ParticipantService } from 'src/participant/service';
+import { WsAuthGuard } from 'src/guards';
 
+@UseGuards(WsAuthGuard)
 @WebSocketGateway({ cors: true })
-export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
+export class Gateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   server: Server;
 
   private logger = new Logger('AppGateway');
 
-  constructor(private readonly service: AppService) {}
+  constructor(
+    private readonly messageService: MessageService,
+    private readonly participantService: ParticipantService,
+  ) {}
 
   // handleConnection(client: Socket) {
   //   this.logger.log(`Client connected: ${client.id}`);
   // }
   handleConnection(client: Socket) {
-    // try {
-    // const token = client.handshake.auth.token; // or from headers
-    // const payload = jwt.verify(token, process.env.JWT_SECRET);
-    const payload = 1;
-    // Attach user to socket
-    client.data = payload;
     this.logger.log(`Client connected: ${client.id}`);
-    // } catch (err) {
-    //   client.disconnect();
-    // }
   }
 
   handleDisconnect(client: Socket) {
@@ -46,6 +43,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
     @ConnectedSocket() client: Socket,
     @MessageBody() cid: string,
   ) {
+    const uid: string = client.data as string;
+    await this.participantService.getConversationParticipant(uid, cid);
     await client.join(cid);
     this.logger.log(`Client ${client.id} joined conversation ${cid}`);
     client.emit('joinedConversation', cid);
@@ -64,14 +63,13 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const { cid, text, rid } = payload;
     const user: string = client.data as string;
-
-    const message = await this.service.sendMessage(cid, user, text, rid);
-
+    await this.participantService.getConversationParticipant(user, cid);
+    const message = await this.messageService.sendMessage(cid, user, text, rid);
     this.logger.log(`Message sent to ${payload.cid} by ${user}`);
     this.server.to(payload.cid).emit('newMessage', message);
   }
 
-  // Send a message
+  //Update a message
   @SubscribeMessage('updateMessage')
   async handleUpdateMessage(
     @ConnectedSocket() client: Socket,
@@ -84,7 +82,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const { cid, text, mid } = payload;
     const user: string = client.data as string;
-    const message = await this.service.updateMessage(cid, mid, user, text);
+    await this.participantService.getConversationParticipant(user, cid);
+    const message = await this.messageService.updateMessage(user, mid, text);
 
     this.logger.log(`Message Updated ${payload.cid} by ${user}`);
     this.server.to(payload.cid).emit('updateMessage', message);
@@ -101,8 +100,8 @@ export class AppGateway implements OnGatewayConnection, OnGatewayDisconnect {
   ) {
     const { cid, mid } = payload;
     const user: string = client.data as string;
-    const message = await this.service.deleteMessage(user, mid, cid);
-
+    await this.participantService.getConversationParticipant(user, cid);
+    const message = await this.messageService.deleteMessage(user, mid);
     this.logger.log(`Message Updated ${payload.cid} by ${user}`);
     this.server.to(payload.cid).emit('deleteMessage', message);
   }

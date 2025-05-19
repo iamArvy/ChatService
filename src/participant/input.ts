@@ -1,13 +1,5 @@
 import { ArgsType, Field, InputType } from '@nestjs/graphql';
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
-
-@InputType()
-export class CreateGroupInput {
-  @IsString()
-  @IsNotEmpty()
-  @Field(() => String, { description: 'Text Content' })
-  name: string;
-}
+import { IsArray, IsNotEmpty } from 'class-validator';
 
 @InputType()
 export class AddParticipantsInput {
