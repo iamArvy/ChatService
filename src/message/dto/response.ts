@@ -1,4 +1,4 @@
-import { Message } from 'src/message/schema';
+import { Message } from 'src/db/schemas/message.schema';
 
 export class MessageResponse implements Message {
   id: string;

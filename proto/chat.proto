@@ -23,6 +23,19 @@ service MessageService {
   rpc Reply(UpdateMessageInput) returns (MessageData);
 }
 
+service GroupService {
+  rpc Create(CreateGroupInput) returns (ConversationData);
+  rpc Delete(UserGroupRequest) returns (Status);
+  rpc Update(UpdateGroupInput) returns (Status);
+  rpc MakeOwner(UserGroupParticipantRequest) returns (Status);
+  rpc AddMembers(AddParticipantRequest) returns (Status);
+  rpc GetParticipants(UserGroupRequest) returns (ParticipantList);
+  rpc MakeAdmin(UserGroupParticipantRequest) returns (ParticipantList);
+  rpc RemoveAdmin(UserGroupParticipantRequest) returns (ParticipantList);
+  rpc RemoveMember(UserGroupParticipantRequest) returns (ParticipantList);
+  rpc Leave(UserGroupRequest) returns (ParticipantList);
+}
+
 message MessageInput {
   string text = 1;
 }
@@ -60,7 +73,7 @@ message ConversationData {
 }
 
 message ConversationList  {
-  ConversationData conversations = 1;
+  repeated ConversationData conversations = 1;
 }
 
 message GetConversation {
@@ -72,10 +85,15 @@ message UserId {
   string user_id = 1;
 }
 
-message MessageData {}
+message MessageData {
+  string conversation_id = 1;
+  string sender_id = 2;
+  optional string reply_id = 3;
+  string text = 4;
+}
 
 message MessageList {
-  MessageData messages = 1;
+  repeated MessageData messages = 1;
 }
 
 message Status {
@@ -99,6 +117,43 @@ message ParticipantData {
   string created_at = 5;
   string updated_at = 6; 
 }
+
+message ParticipantList {
+  repeated ParticipantData participants = 1;
+}
+
+message GroupInput {
+  string name = 1;
+}
+
+message CreateGroupInput {
+  string user_id = 1;
+  GroupInput data = 2;
+}
+
+message UpdateGroupInput {
+  string id = 1;
+  string user_id = 2;
+  GroupInput data = 3;
+}
+
+message UserGroupRequest {
+  string id = 1;
+  string user_id = 2;
+}
+
+message UserGroupParticipantRequest {
+  string id = 1;
+  string user_id = 2;
+  string participant_id = 3;
+}
+
+message AddParticipantRequest {
+  string id = 1;
+  string user_id = 2;
+  repeated string users = 3;
+}
+
 // service ChatService {
 //   rpc Health(google.protobuf.Empty) returns (Status);
 

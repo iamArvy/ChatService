@@ -13,6 +13,10 @@ export class MessageController {
   constructor(private readonly service: MessageService) {}
 
   @GrpcMethod('MessageService')
+  health() {
+    return { success: true };
+  }
+  @GrpcMethod('MessageService')
   send({ user_id, conversation_id, data }: CreateMessageInput) {
     return this.service.send(user_id, conversation_id, data);
   }

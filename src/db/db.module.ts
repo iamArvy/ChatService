@@ -4,6 +4,9 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { Message, MessageSchema } from './schemas/message.schema';
 import { FriendRepository } from './repositories/friend.repository';
 import { ConversationRepository } from './repositories/conversation.repository';
+import { MessageRepository } from './repositories/message.repository';
+import { ParticipantRepository } from './repositories/participant.repository';
+import { UserService } from './repositories/user.repository';
 
 @Module({
   imports: [
@@ -13,7 +16,20 @@ import { ConversationRepository } from './repositories/conversation.repository';
     ),
     MongooseModule.forFeature([{ name: Message.name, schema: MessageSchema }]),
   ],
-  providers: [PrismaService],
-  exports: [FriendRepository, ConversationRepository],
+  providers: [
+    PrismaService,
+    FriendRepository,
+    ConversationRepository,
+    MessageRepository,
+    ParticipantRepository,
+    UserService,
+  ],
+  exports: [
+    FriendRepository,
+    ConversationRepository,
+    MessageRepository,
+    ParticipantRepository,
+    UserService,
+  ],
 })
 export class DbModule {}
