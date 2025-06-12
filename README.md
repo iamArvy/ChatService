@@ -4,27 +4,37 @@ The **Chat Service** is a real-time messaging microservice built with **NestJS**
 
 ---
 
-## 🚀 Features
+## Features
 
-* Real-time messaging using Socket.io
+* gRPC based service-to-service communication.
 * Create 1-on-1 or group conversations
 * Send, edit, and delete messages
 * Retrieve list of conversations and message history
-* REST API and GraphQL support
-* API documentation via Swagger and Apollo Playground
 * Modular and scalable microservice architecture
+* Proto file contracts for message and conversation operations
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 * **Framework**: [NestJS](https://nestjs.com/)
-* **Authentication**: [Passport.js](https://www.passportjs.org/) & [JWT (JSON Web Tokens)](https://jwt.io/)
-* **Realtime**: [Socket.io](https://www.socket.io/)
-* **API**: REST, GraphQL (Apollo)
+* **Service Communication**: [gRPC](https://www.grpc.io/)
 * **ORM**: [Prisma](https://www.prisma.io/) & [Mongoose](https://www.mongoose.org/)
 * **Databases**: [PostgreSQL](https://www.postgresql.org/) for relational data, [MongoDB](https://www.mongodb.org/) (for document-based data)
-* **API Docs**: [Swagger](https://swagger.org) for REST, [Apollo Playground](https://apollo.org) for GraphQL
+* **API Docs**: gRPC via .proto files
+
+---
+
+## gRPC Proto Contracts
+
+The Proto file is defined in chat.proto file in the protos/ directory and describes the available gRPC services and messages for the Application.
+Services includes:
+
+* Conversation Service
+* Message Service
+* Group Service
+
+Use tools like grpcurl or Postman (gRPC beta) for testing, or generate clients from proto definitions.
 
 ---
 
@@ -34,6 +44,7 @@ The **Chat Service** is a real-time messaging microservice built with **NestJS**
 
 - Node.js (v20+)
 - npm, yarn, or pnpm (pnpm is recommended)
+- Docker & Docker Compose (for containerized setup)
 
 ### Installation
 
@@ -50,8 +61,7 @@ Create a `.env` file in the root directory with the following variables:
 ```
 MONGO_DB_URL="your_mongodb_connection_string"
 POSTGRES_DB_URL="your_mongodb_connection_string"
-JWT_SECRET="your_jwt_secret"
-PORT=3000
+GRPC_URL="your desired gPRC url e.g: localhost:50051"
 ```
 
 ### Running the service
@@ -66,27 +76,18 @@ docker-compose up --build
 
 ---
 
-## 📚 API Documentation
-
-* **Swagger UI** (REST): [http://localhost:3000/api](http://localhost:3000/api)
-* **Apollo Playground** (GraphQL): [http://localhost:3000/graphql](http://localhost:3000/graphql)
-
----
-
 ## 🗃️ Folder Structure (Simplified)
 
 ```
 chat-service/
 ├── prisma/              #Contains prisma schema and migrations
+├── proto/               # gRPC proto definitions
 ├── src/
-│   ├── conversation/    # Conversation logic, controller, resolver etc
-│   ├── friend/          # Friend Relationship Logic (Data to be Acquired through events from User Service)
-│   ├── gateway/         # WebSocket Gateway
-│   ├── guards/          # Application Route Guards
-│   ├── message/         # Message logic, controller, resolver etc
-│   ├── participant/     # Participants logic, controller, resolver etc
-│   ├── prisma/          # Prisma setup (Postgres)
-│   ├── strategies/      # User Relationship Logic (Data to be acquired through events from User Service)
+│   ├── cache/           # Cache Module and Service for easy cache integration.
+│   ├── conversation/    # Conversation logic, gRPC handler, and DTOs.
+│   ├── db/              # Database setup (Prisma Service, Schemas and Repositories).
+│   ├── group/           # Group logic, gRPC handler, and DTOs.
+│   ├── message/         # Message logic, gRPC handler, and DTOs.
 │   ├── app.module.ts
 │   └── main.ts
 ├── docker-compose.yml
@@ -103,4 +104,3 @@ chat-service/
 
 * ✅ Integrate message read receipts
 * ✅ Support file/media attachments
-* ✅ Add SQS/Kafka for message queuing
