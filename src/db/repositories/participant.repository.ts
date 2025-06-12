@@ -58,7 +58,7 @@ export class ParticipantRepository {
     });
   }
 
-  createMany(users: string[], conversation_id: string) {
+  createMany(conversation_id: string, users: string[]) {
     return this.prisma.participant.createMany({
       data: users.map((user_id) => ({
         user_id,

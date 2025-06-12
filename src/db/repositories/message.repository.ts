@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Message, MessageDocument } from '../schemas/message.schema';
-import { Model } from 'mongoose';
+import { DeleteResult, Model } from 'mongoose';
 
 @Injectable()
 export class MessageRepository {
@@ -36,12 +36,14 @@ export class MessageRepository {
   }
 
   update(id: string, text: string) {
-    return this.message.updateOne({ id }, { text });
+    return this.message.updateOne({ id }, { text }).exec();
   }
 
-  deleteMessage(id: string) {
-    return this.message.deleteOne({
-      id,
-    });
+  deleteMessage(id: string): Promise<DeleteResult> {
+    return this.message
+      .deleteOne({
+        id,
+      })
+      .exec();
   }
 }

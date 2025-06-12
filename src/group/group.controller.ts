@@ -2,143 +2,73 @@ import { Controller } from '@nestjs/common';
 // import { GrpcMethod } from '@nestjs/microservices';
 // import { CreateGroupInput } from './dto';
 import { GroupService } from './group.service';
+import { GrpcMethod } from '@nestjs/microservices';
+import {
+  AddMembersInput,
+  CreateGroupInput,
+  UpdateGroupData,
+  UserDataInput,
+  UserGroupInput,
+  UserGroupParticipantInput,
+} from './dto';
 
 @Controller('group')
 export class GroupController {
   constructor(private service: GroupService) {}
 
-  // @GrpcMethod('GroupService')
-  // createGroup({ user_id, data }: CreateGroupInput) {
-  //   return this.service.createGroup(user_id, data);
-  // }
-  updateInfo() {}
-  updateVisibility() {}
-  // @GrpcMethod('GroupService')
-  // async deleteGroup(
-  //   @Req() req: Request & { user: string },
-  //   @Param('cid') cid: string,
-  // ) {
-  //   await this.participantService.getConversationParticipant(req.user, cid);
-  //   const conversation = await this.service.getConversation(cid);
-  //   await this.service.deleteGroup(
-  //     cid,
-  //     conversation.creator_id === req.user,
-  //     conversation.group ?? false,
-  //   );
-  //   return true;
-  // }
+  @GrpcMethod('GroupService')
+  createGroup({ user_id, data }: CreateGroupInput) {
+    return this.service.create(user_id, data);
+  }
 
-  // @GrpcMethod('GroupService')
-  // async makeOwner(
-  //   @Req() req: Request & { user: string },
-  //   @Param('cid') cid: string,
-  //   @Param('pid') pid: string,
-  // ) {
-  //   await this.participantService.getConversationParticipant(req.user, cid);
-  //   await this.participantService.getConversationParticipant(pid, cid);
-  //   const conversation = await this.service.getConversation(req.user);
-  //   await this.service.changeOwnership(
-  //     req.user,
-  //     cid,
-  //     pid,
-  //     conversation.creator_id === req.user,
-  //   );
-  //   return true;
-  // }
+  @GrpcMethod('GroupService')
+  update({ user_id, id, data }: UserDataInput<UpdateGroupData>) {
+    return this.service.update(id, user_id, data);
+  }
 
+  @GrpcMethod('GroupService')
+  delete({ user_id, id }: UserGroupInput) {
+    return this.service.delete(id, user_id);
+  }
+
+  // changePrivacy(){}
   // generateInviteLink() {}
   // acceptInviteRequest() {}
   // rejectInviteRequest() {}
   // joinWithLink() {}
 
-  // @GrpcMethod('GroupService')
-  // async addUsers(
-  //   @Req() req: Request & { user: string },
-  //   @Param('cid') cid: string,
-  //   @Body('data') data: AddParticipantsInput,
-  // ) {
-  //   const participant = await this.service.getConversationParticipant(
-  //     req.user,
-  //     cid,
-  //   );
-  //   const conversation = await this.conversationService.getConversation(
-  //     req.user,
-  //   );
-  //   await this.service.addUsersToGroup(
-  //     req.user,
-  //     data.users,
-  //     cid,
-  //     participant.is_admin,
-  //     conversation.group ?? false,
-  //   );
-  //   return true;
-  // }
+  @GrpcMethod('GroupService')
+  makeOwner({ id, user_id, participant_id }: UserGroupParticipantInput) {
+    return this.service.makeOwner(id, user_id, participant_id);
+  }
 
-  // @GrpcMethod('GroupService')
-  // async getParticipants(
-  //   @Req() req: Request & { user: string },
-  //   @Param('cid') cid: string,
-  // ) {
-  //   await this.service.getConversationParticipant(req.user, cid);
-  //   return await this.service.getConversationParticipants(cid);
-  // }
+  @GrpcMethod('GroupService')
+  async addMembers({ id, user_id, users }: AddMembersInput) {
+    return this.service.addMembers(id, user_id, users);
+  }
 
-  // async makeAdmin(
-  //   @Req() req: Request & { user: string },
-  //   @Param('cid') cid: string,
-  //   @Param('pid') pid: string,
-  // ) {
-  //   const user = await this.service.getConversationParticipant(req.user, cid);
-  //   const participant = await this.service.getConversationParticipant(pid, cid);
-  //   await this.conversationService.getConversation(cid);
-  //   await this.service.makeAdmin(pid, user.is_admin, participant.is_admin);
-  //   return true;
-  // }
+  @GrpcMethod('GroupService')
+  getParticipants({ id, user_id }: UserGroupInput) {
+    return this.service.getParticipants(id, user_id);
+  }
 
-  // async removeAdmin(
-  //   @Req() req: Request & { user: string },
-  //   @Param('cid') cid: string,
-  //   @Param('pid') pid: string,
-  // ) {
-  //   const user = await this.service.getConversationParticipant(req.user, cid);
-  //   const participant = await this.service.getConversationParticipant(pid, cid);
-  //   const conversation = await this.conversationService.getConversation(cid);
-  //   await this.service.removeAdmin(
-  //     pid,
-  //     user.is_admin,
-  //     participant.is_admin,
-  //     conversation.creator_id === pid,
-  //   );
-  //   return true;
-  // }
+  @GrpcMethod('GroupService')
+  makeAdmin({ id, user_id, participant_id }: UserGroupParticipantInput) {
+    return this.service.makeAdmin(id, user_id, participant_id);
+  }
 
-  // async removeUser(
-  //   @Req() req: Request & { user: string },
-  //   @Param('cid') cid: string,
-  //   @Param('pid') pid: string,
-  // ) {
-  //   const user = await this.service.getConversationParticipant(req.user, cid);
-  //   await this.service.getConversationParticipant(pid, cid);
-  //   const conversation = await this.conversationService.getConversation(cid);
-  //   return await this.service.removeUserFromGroup(
-  //     cid,
-  //     pid,
-  //     user.is_admin,
-  //     conversation.creator_id === pid,
-  //   );
-  // }
+  @GrpcMethod('GroupService')
+  removeAdmin({ id, user_id, participant_id }: UserGroupParticipantInput) {
+    return this.service.makeAdmin(id, user_id, participant_id);
+  }
 
-  // async leaveGroup(
-  //   @Req() req: Request & { user: string },
-  //   @Param('cid') cid: string,
-  // ) {
-  //   await this.service.getConversationParticipant(req.user, cid);
-  //   const conversation = await this.conversationService.getConversation(cid);
-  //   await this.service.leaveGroup(
-  //     req.user,
-  //     cid,
-  //     conversation.creator_id === req.user,
-  //   );
-  //   return true;
-  // }
+  @GrpcMethod('GroupService')
+  removeMember({ id, user_id, participant_id }: UserGroupParticipantInput) {
+    return this.service.removeMember(id, user_id, participant_id);
+  }
+
+  @GrpcMethod('GroupService')
+  leaveGroup({ id, user_id }: UserGroupInput) {
+    return this.service.leave(id, user_id);
+  }
 }

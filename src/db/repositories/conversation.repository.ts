@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma';
-import { Conversation } from '@prisma/client';
+import { Conversation, Prisma } from '@prisma/client';
 
 @Injectable()
 export class ConversationRepository {
@@ -92,6 +92,14 @@ export class ConversationRepository {
     });
   }
 
+  update(id: string, data: Prisma.ConversationUpdateInput) {
+    return this.prisma.conversation.update({
+      where: {
+        id,
+      },
+      data,
+    });
+  }
   updateOwnership(id: string, user_id: string) {
     return this.prisma.conversation.update({
       where: {
