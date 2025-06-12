@@ -8,13 +8,44 @@ import "google/protobuf/empty.proto";
 service ConversationService {
   rpc Health(google.protobuf.Empty) returns (Status);
 
-  rpc Create(createConversationInput) returns (ConversationData);
+  rpc Create(CreateConversationInput) returns (ConversationData);
   rpc List(UserId) returns (ConversationList);
   rpc Get(GetConversation) returns (ConversationData);
   rpc Messages(GetConversation) returns (MessageList);
 }
 
-message createConversationInput {
+service MessageService {
+  // rpc Health(google.protobuf.Empty) returns (Status);
+
+  rpc Send(CreateMessageInput) returns (MessageData);
+  rpc Update(UpdateMessageInput) returns (MessageData);
+  rpc Delete(DeleteMessageInput) returns (Status);
+  rpc Reply(UpdateMessageInput) returns (MessageData);
+}
+
+message MessageInput {
+  string text = 1;
+}
+
+message CreateMessageInput {
+  string user_id = 1;
+  string conversation_id = 2;
+  MessageInput data = 3;
+}
+
+message UpdateMessageInput {
+  string id = 1;
+  string user_id = 2;
+  MessageInput data = 3;
+}
+
+message DeleteMessageInput {
+  string id = 1;
+  string user_id = 2;
+}
+
+
+message CreateConversationInput {
   string user_id = 1;
   string recipient_id = 2;
 }
