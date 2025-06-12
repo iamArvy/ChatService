@@ -1,4 +1,4 @@
-import { ParticipantService } from 'src/participant/service';
+import { ParticipantService } from 'src/participant/participant.service';
 import { MessageEntity } from './entity';
 import { Args, Context, Query, Resolver } from '@nestjs/graphql';
 import { UseGuards } from '@nestjs/common';

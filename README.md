@@ -77,6 +77,7 @@ docker-compose up --build
 
 ```
 chat-service/
+├── prisma/              #Contains prisma schema and migrations
 ├── src/
 │   ├── conversation/    # Conversation logic, controller, resolver etc
 │   ├── friend/          # Friend Relationship Logic (Data to be Acquired through events from User Service)

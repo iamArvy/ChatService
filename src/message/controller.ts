@@ -1,7 +1,7 @@
 import { JwtAuthGuard } from '../guards/jwt.guard';
 import { Body, Controller, Get, Param, Req, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiParam } from '@nestjs/swagger';
-import { ParticipantService } from 'src/participant/service';
+import { ParticipantService } from 'src/participant/participant.service';
 import { MessageService } from './service';
 import { MessageResponse } from './response';
 
